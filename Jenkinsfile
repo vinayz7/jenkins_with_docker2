@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'barathkumar29/my-flask-app:latest'
+        DOCKER_IMAGE = 'vinayz7/my-flask-app:latest'
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git url:'https://github.com/jkbarathkumar/jenkins_with_docker2.git',branch: 'main'
+                git url:'https://github.com/vinayz7/jenkins_with_docker2/edit/main/Jenkinsfile',branch: 'main'
             }
         }
 
@@ -19,8 +19,9 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-            steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
+             steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: '$DOCKER_USER',passwordVariable: '$DOCKER_PASS')]) {
+                    sh 'docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"'
                     sh 'docker push $DOCKER_IMAGE'
                 }
             }
